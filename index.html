@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List Maker</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">To-Do List Maker</h1>
+    <div class="form-container">
+      <input type="text" id="task-input" placeholder="Enter the month task" class="task-input">
+      <button id="add-task" onclick="addTask()">Add Task</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="day-task-input" placeholder="Enter a day task" class="task-input">
+      <button id="add-day-task" onclick="addDayTask()">Add Day Task</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-1-input" placeholder="Enter a week task 1" class="task-input">
+      <button id="add-week-1-task" onclick="addWeekTask1()">Add Week Task 1</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-2-input" placeholder="Enter a week task 2" class="task-input">
+      <button id="add-week-2-task" onclick="addWeekTask2()">Add Week Task 2</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-3-input" placeholder="Enter a week task 3" class="task-input">
+      <button id="add-week-3-task" onclick="addWeekTask3()">Add Week Task 3</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-4-input" placeholder="Enter a week task 4" class="task-input">
+      <button id="add-week-4-task" onclick="addWeekTask4()">Add Week Task 4</button>
+    </div>
+
+
+    <div class="month-select">
+      <label for="month-select">Select Month:</label>
+      <select id="month-select" onchange="handleMonthChange()">
+        <option value="January">January</option>
+        <option value="February">February</option>
+        <option value="March">March</option>
+        <option value="April">April</option>
+        <option value="May">May</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+        <option value="September">September</option>
+        <option value="October">October</option>
+        <option value="November">November</option>
+        <option value="December">December</option>
+      </select>
+    </div>
+
+    <h2 class="text-lg font-bold mt-8 mb-2" id="current-month"></h2>
+
+    <h3 class="text-lg font-bold mt-4" id="day-tasks-heading"></h3>
+    <ul id="day-tasks" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 1:</h3>
+    <ul id="week-tasks-1" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 2:</h3>
+    <ul id="week-tasks-2" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 3:</h3>
+    <ul id="week-tasks-3" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 4:</h3>
+    <ul id="week-tasks-4" class="todo-list"></ul>
+
+
+    <h3 class="text-lg font-bold mt-4">Month Tasks:</h3>
+    <ul id="month-tasks" class="todo-list"></ul>
+
+    <script src="script.js">
+
+    </script>
+  </div>
+</body>
+
+</html>

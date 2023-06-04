@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List Maker</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Styles for the form and lists */
+    body {
+      background-color: #000;
+      color: #00ff00;
+    }
+
+    .completed label {
+      text-decoration: line-through;
+    }
+
+    .form-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form-container input[type="text"] {
+      background-color: #000;
+      color: #00ff00;
+      border: none;
+      border-bottom: 2px solid #00ff00;
+      padding: 8px;
+      margin-right: 10px;
+    }
+
+    .form-container button {
+      background-color: #00ff00;
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #00ff00;
+      color: #000;
+    }
+
+    .task-input {
+      flex-grow: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .task-submit {
+      padding: 8px 16px;
+      background-color: #000;
+      color: #00ff00;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .todo-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .todo-list div {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .checkbox {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+
+    .checkbox input[type="checkbox"] {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .checkbox label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      border: 2px solid #00ff00;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .checkbox input[type="checkbox"]:checked+label {
+      background-color: #00ff00;
+    }
+
+    label {
+      flex-grow: 1;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    button.delete-button {
+      padding: 4px 8px;
+      background-color: #000;
+      color: #ff0000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Additional styles for the month selection */
+    .month-select {
+      margin-top: 20px;
+    }
+
+    .month-select label {
+      display: block;
+      color: #00ff00;
+      margin-bottom: 10px;
+    }
+
+    .month-select select {
+      background-color: #000;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 8px;
+      width: 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">To-Do List Maker</h1>
+    <div class="form-container">
+      <input type="text" id="task-input" placeholder="Enter the month task" class="task-input">
+      <button id="add-task" onclick="addTask()">Add Task</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="day-task-input" placeholder="Enter a day task" class="task-input">
+      <button id="add-day-task" onclick="addDayTask()">Add Day Task</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-1-input" placeholder="Enter a week task 1" class="task-input">
+      <button id="add-week-1-task" onclick="addWeekTask1()">Add Week Task 1</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-2-input" placeholder="Enter a week task 2" class="task-input">
+      <button id="add-week-2-task" onclick="addWeekTask2()">Add Week Task 2</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-3-input" placeholder="Enter a week task 3" class="task-input">
+      <button id="add-week-3-task" onclick="addWeekTask3()">Add Week Task 3</button>
+    </div>
+
+    <div class="form-container">
+      <input type="text" id="week-task-4-input" placeholder="Enter a week task 4" class="task-input">
+      <button id="add-week-4-task" onclick="addWeekTask4()">Add Week Task 4</button>
+    </div>
+
+
+    <div class="month-select">
+      <label for="month-select">Select Month:</label>
+      <select id="month-select" onchange="handleMonthChange()">
+        <option value="January">January</option>
+        <option value="February">February</option>
+        <option value="March">March</option>
+        <option value="April">April</option>
+        <option value="May">May</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+        <option value="September">September</option>
+        <option value="October">October</option>
+        <option value="November">November</option>
+        <option value="December">December</option>
+      </select>
+    </div>
+
+    <h2 class="text-lg font-bold mt-8 mb-2" id="current-month"></h2>
+
+    <h3 class="text-lg font-bold mt-4" id="day-tasks-heading"></h3>
+    <ul id="day-tasks" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 1:</h3>
+    <ul id="week-tasks-1" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 2:</h3>
+    <ul id="week-tasks-2" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 3:</h3>
+    <ul id="week-tasks-3" class="todo-list"></ul>
+
+    <h3 class="text-lg font-bold mt-4">Week Tasks 4:</h3>
+    <ul id="week-tasks-4" class="todo-list"></ul>
+
+
+    <h3 class="text-lg font-bold mt-4">Month Tasks:</h3>
+    <ul id="month-tasks" class="todo-list"></ul>
+
+    <script>
+      function saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      }
+
+      // Function to retrieve tasks from local storage
+      function retrieveTasks() {
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+          tasks = JSON.parse(savedTasks);
+        }
+      }
+
+      // Add an event listener to save tasks before the page is unloaded
+      window.addEventListener('beforeunload', saveTasks);
+
+      // Call the retrieveTasks function when the page loads
+      window.addEventListener('load', retrieveTasks);
+
+      const taskInput = document.getElementById('task-input');
+      const dayTaskInput = document.getElementById('day-task-input');
+      const weekTaskInput1 = document.getElementById('week-task-1-input');
+      const weekTaskInput2 = document.getElementById('week-task-2-input');
+      const weekTaskInput3 = document.getElementById('week-task-3-input');
+      const weekTaskInput4 = document.getElementById('week-task-4-input');
+      const addTaskButton = document.getElementById('add-task');
+      const addDayTaskButton = document.getElementById('add-day-task');
+      const addWeekTaskButton = document.getElementById('add-week-task');
+      const dayTaskList = document.getElementById('day-tasks');
+      const weekTaskList1 = document.getElementById('week-tasks-1');
+      const weekTaskList2 = document.getElementById('week-tasks-2');
+      const weekTaskList3 = document.getElementById('week-tasks-3');
+      const weekTaskList4 = document.getElementById('week-tasks-4');
+      const monthTaskList = document.getElementById('month-tasks');
+      const monthSelect = document.getElementById('month-select');
+      const currentMonthHeading = document.getElementById('current-month');
+
+      // Create separate task arrays for each month
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ];
+
+      const tasks = {
+        January: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        February: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        March: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        April: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        May: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        June: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        July: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        August: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        September: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        October: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        November: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] },
+        December: { dayTasks: [], weekTasks1: [], weekTasks2: [], weekTasks3: [], weekTasks4: [], monthTasks: [] }
+      };
+
+      // Initialize the month select with the current month
+      const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+      monthSelect.value = currentMonth;
+
+      // Set the current month heading
+      currentMonthHeading.textContent = currentMonth + ' Tasks:';
+
+      // Function to add a task to the month tasks
+      function addTask() {
+        const task = taskInput.value.trim();
+        if (task !== '') {
+          const month = monthSelect.value;
+          tasks[month].monthTasks.push(task); // Add the task to the monthTasks array
+          updateMonthTasks(); // Call the updateMonthTasks function
+          taskInput.value = '';
+
+        }
+      }
+
+      // Function to add a day task
+      function addDayTask() {
+        const task = dayTaskInput.value.trim();
+        if (task !== '') {
+          const month = monthSelect.value;
+          tasks[month].dayTasks.push(task);
+          updateDayTasks();
+          dayTaskInput.value = '';
+
+
+        }
+      }
+
+      // Function to add a week task
+      function addWeekTask1() {
+        const task = weekTaskInput1.value.trim();
+        if (task !== '') {
+          const month = monthSelect.value;
+          tasks[month].weekTasks1.push(task);
+          updateWeekTasks1();
+          weekTaskInput1.value = '';
+        }
+      }
+
+      function addWeekTask2() {
+        const task = weekTaskInput2.value.trim();
+        if (task !== '') {
+          const month = monthSelect.value;
+          tasks[month].weekTasks2.push(task);
+          updateWeekTasks2();
+          weekTaskInput2.value = '';
+        }
+      }
+
+      function addWeekTask3() {
+        const task = weekTaskInput3.value.trim();
+        if (task !== '') {
+          const month = monthSelect.value;
+          tasks[month].weekTasks3.push(task);
+          updateWeekTasks3();
+          weekTaskInput3.value = '';
+        }
+      }
+
+      function addWeekTask4() {
+        const task = weekTaskInput4.value.trim();
+        if (task !== '') {
+          const month = monthSelect.value;
+          tasks[month].weekTasks4.push(task);
+          updateWeekTasks4();
+          weekTaskInput4.value = '';
+        }
+      }
+
+      // Function to update the day tasks list
+      function updateDayTasks() {
+        const month = monthSelect.value;
+        const dayTasks = tasks[month].dayTasks;
+        const currentDate = new Date().toLocaleDateString('en-GB'); // Get the current date in the format dd/mm/yy
+        const dayTasksHeading = document.getElementById('day-tasks-heading');
+        dayTasksHeading.textContent = `Day (${currentDate}) Tasks:`; // Update the day tasks heading
+
+        dayTaskList.innerHTML = '';
+        dayTasks.forEach((task) => {
+          const listItem = document.createElement('div');
+          listItem.innerHTML = `
+  <div class="checkbox">
+    <input type="checkbox" id="task-${task}" onchange="toggleCompleted('${task}')">
+    <label for="task-${task}"></label>
+  </div>
+  <label for="task-${task}">${task}</label>
+  <button class="delete-button" onclick="deleteTask('${task}')">Delete</button>
+`;
+          dayTaskList.appendChild(listItem);
+        });
+
+      }
+
+
+      // Function to update the week tasks list
+      function updateWeekTasks1() {
+        const month = monthSelect.value;
+        const weekTasks1 = tasks[month].weekTasks1;
+        weekTaskList1.innerHTML = '';
+        weekTasks1.forEach((task) => {
+          const listItem = document.createElement('div');
+          listItem.innerHTML = `
+        <div class="checkbox">
+          <input type="checkbox" id="task-${task}" onchange="toggleCompleted('${task}')">
+          <label for="task-${task}"></label>
+        </div>
+        <label for="task-${task}">${task}</label>
+        <button class="delete-button" onclick="deleteTask('${task}')">Delete</button>
+      `;
+          weekTaskList1.appendChild(listItem);
+        });
+      }
+
+      function updateWeekTasks2() {
+        const month = monthSelect.value;
+        const weekTasks2 = tasks[month].weekTasks2;
+        weekTaskList2.innerHTML = '';
+        weekTasks2.forEach((task) => {
+          const listItem = document.createElement('div');
+          listItem.innerHTML = `
+        <div class="checkbox">
+          <input type="checkbox" id="task-${task}" onchange="toggleCompleted('${task}')">
+          <label for="task-${task}"></label>
+        </div>
+        <label for="task-${task}">${task}</label>
+        <button class="delete-button" onclick="deleteTask('${task}')">Delete</button>
+      `;
+          weekTaskList2.appendChild(listItem);
+        });
+      }
+
+      function updateWeekTasks3() {
+        const month = monthSelect.value;
+        const weekTasks3 = tasks[month].weekTasks3;
+        weekTaskList3.innerHTML = '';
+        weekTasks3.forEach((task) => {
+          const listItem = document.createElement('div');
+          listItem.innerHTML = `
+        <div class="checkbox">
+          <input type="checkbox" id="task-${task}" onchange="toggleCompleted('${task}')">
+          <label for="task-${task}"></label>
+        </div>
+        <label for="task-${task}">${task}</label>
+        <button class="delete-button" onclick="deleteTask('${task}')">Delete</button>
+      `;
+          weekTaskList3.appendChild(listItem);
+        });
+      }
+
+      function updateWeekTasks4() {
+        const month = monthSelect.value;
+        const weekTasks4 = tasks[month].weekTasks4;
+        weekTaskList4.innerHTML = '';
+        weekTasks4.forEach((task) => {
+          const listItem = document.createElement('div');
+          listItem.innerHTML = `
+        <div class="checkbox">
+          <input type="checkbox" id="task-${task}" onchange="toggleCompleted('${task}')">
+          <label for="task-${task}"></label>
+        </div>
+        <label for="task-${task}">${task}</label>
+        <button class="delete-button" onclick="deleteTask('${task}')">Delete</button>
+      `;
+          weekTaskList4.appendChild(listItem);
+        });
+      }
+      // Function to update the month tasks list
+      function updateMonthTasks() {
+        const month = monthSelect.value;
+        const monthTasks = tasks[month].monthTasks;
+        monthTaskList.innerHTML = '';
+        monthTasks.forEach((task) => {
+          const listItem = document.createElement('div');
+          listItem.innerHTML = `
+  <div class="checkbox">
+    <input type="checkbox" id="task-${task}" onchange="toggleCompleted('${task}')">
+    <label for="task-${task}"></label>
+  </div>
+  <label for="task-${task}">${task}</label>
+  <button class="delete-button" onclick="deleteTask('${task}')">Delete</button>
+`;
+          monthTaskList.appendChild(listItem);
+        });
+
+      }
+
+
+      // Function to toggle the completed status of a task
+      function toggleCompleted(task) {
+        const month = monthSelect.value;
+        const dayTasks = tasks[month].dayTasks;
+        const weekTasks1 = tasks[month].weekTasks1;
+        const weekTasks2 = tasks[month].weekTasks2;
+        const weekTasks3 = tasks[month].weekTasks3;
+        const weekTasks4 = tasks[month].weekTasks4;
+
+        if (dayTasks.includes(task)) {
+          const index = dayTasks.indexOf(task);
+          const listItem = dayTaskList.children[index];
+          listItem.classList.toggle('completed');
+
+        } else if (month.includes(task)) {
+          const index = month.indexOf(task)
+          const listItem = month.children[index]
+          listItem.classList.toggle('completed')
+        }
+        else if (weekTasks1.includes(task)) {
+          const index = weekTasks1.indexOf(task);
+          const listItem = weekTaskList1.children[index];
+          listItem.classList.toggle('completed');
+        } else if (weekTasks2.includes(task)) {
+          const index = weekTasks2.indexOf(task);
+          const listItem = weekTaskList2.children[index];
+          listItem.classList.toggle('completed');
+        } else if (weekTasks3.includes(task)) {
+          const index = weekTasks3.indexOf(task);
+          const listItem = weekTaskList3.children[index];
+          listItem.classList.toggle('completed');
+        } else if (weekTasks4.includes(task)) {
+          const index = weekTasks4.indexOf(task);
+          const listItem = weekTaskList4.children[index];
+          listItem.classList.toggle('completed');
+        }
+      }
+
+
+      // Function to delete a task
+      function deleteTask(task) {
+        const month = monthSelect.value;
+        const dayTasks = tasks[month].dayTasks;
+        const weekTasks1 = tasks[month].weekTasks1;
+        const weekTasks2 = tasks[month].weekTasks2;
+        const weekTasks3 = tasks[month].weekTasks3;
+        const weekTasks4 = tasks[month].weekTasks4;
+        const monthTasks = tasks[month].monthTasks;
+
+        if (dayTasks.includes(task)) {
+          const index = dayTasks.indexOf(task);
+          dayTasks.splice(index, 1);
+          updateDayTasks();
+        } else if (weekTasks1.includes(task)) {
+          const index = weekTasks1.indexOf(task);
+          weekTasks1.splice(index, 1);
+          updateWeekTasks1();
+        } else if (weekTasks2.includes(task)) {
+          const index = weekTasks2.indexOf(task);
+          weekTasks2.splice(index, 1);
+          updateWeekTasks2();
+        } else if (weekTasks3.includes(task)) {
+          const index = weekTasks3.indexOf(task);
+          weekTasks3.splice(index, 1);
+          updateWeekTasks3();
+        } else if (weekTasks4.includes(task)) {
+          const index = weekTasks4.indexOf(task);
+          weekTasks4.splice(index, 1);
+          updateWeekTasks4();
+        } else if (monthTasks.includes(task)) {
+          const index = monthTasks.indexOf(task);
+          monthTasks.splice(index, 1);
+          updateMonthTasks();
+        }
+      }
+
+
+      // Function to handle month change
+      function handleMonthChange() {
+        const month = monthSelect.value;
+        currentMonthHeading.textContent = month + ' Tasks:';
+        updateDayTasks();
+        updateWeekTasks1();
+        updateWeekTasks2();
+        updateWeekTasks3();
+        updateWeekTasks4();
+        updateMonthTasks();
+      }
+
+      // Initialize the day tasks and week tasks for the current month
+      updateDayTasks();
+      updateWeekTasks1();
+      updateWeekTasks2();
+      updateWeekTasks3();
+      updateWeekTasks4();
+      updateMonthTasks();
+
+
+  // Add an event listener to execute the function when the page finishes loading
+
+    </script>
+  </div>
+</body>
+
+</html>
